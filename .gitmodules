@@ -1,0 +1,3 @@
+[submodule "libkowmf"]
+	path = libkowmf
+	url = git@github.com:reporter123/libkowmf.git

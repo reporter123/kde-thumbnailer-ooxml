@@ -1,11 +1,20 @@
 project(kde-thumbnailer-ooxml)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+set(QT_MIN_VERSION "5.3.0")
 
-find_package(KDE4 REQUIRED)
-include(KDE4Defaults)
+find_package(ECM 1.0.0 REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
-add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories(${QT_INCLUDES} ${KDE4_INCLUDES})
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings)
+
+find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS Gui Xml)
+find_package(KF5 REQUIRED COMPONENTS KIO Archive)
+
+add_definitions(${QT_DEFINITIONS} ${KF5_DEFINITIONS} -DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
+
+include_directories(${QT_INCLUDES} ${KF5_INCLUDES} ${Qt5Xml_INCLUDE_DIRS})
 
 set(libkowmf_SRCS
     libkowmf/WmfAbstractBackend.cpp
@@ -13,14 +22,14 @@ set(libkowmf_SRCS
     libkowmf/WmfPainterBackend.cpp
     libkowmf/WmfParser.cpp
     libkowmf/WmfStack.cpp
+    libkowmf/libkowmflogging.cpp
 )
 
 set(ooxmlthumbnail_SRCS ooxmlcreator.cpp ${libkowmf_SRCS})
 
-kde4_add_plugin(ooxmlthumbnail ${ooxmlthumbnail_SRCS})
+add_library(ooxmlthumbnail ${ooxmlthumbnail_SRCS})
 target_link_libraries(ooxmlthumbnail
-    ${KDE4_KIO_LIBS}
-    ${QT_QTXML_LIBRARY}
+    Qt5::Gui Qt5::Xml KF5::KIOWidgets KF5::Archive
 )
 
 install(TARGETS ooxmlthumbnail DESTINATION ${PLUGIN_INSTALL_DIR})

@@ -26,7 +26,6 @@
 #include <QImage>
 #include <KZip>
 #include <KZipFileEntry>
-#include <kdemacros.h>
 
 #include "libkowmf/WmfPainterBackend.h"
 
